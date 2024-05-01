@@ -1,0 +1,90 @@
+﻿@model ML.Escritor
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <h1 class="text-center">Lista de Escritores</h1>
+    <h5>Seleccione agregar para insertar un nuevo usuario</h5>
+    <hr />
+</div>
+<div>
+    @using (Html.BeginForm("GetAll", "Escritor", FormMethod.Get, new { enctype = "multipart/form-data" }))
+    {
+        @Html.TextBoxFor(model => model.Nombre, new { @class = "Form-control", @placeholder = "NOMBRE" })
+        @Html.TextBoxFor(model => model.CorreoElectronico, new { @class = "Form-control", @placeholder = "CORREO" })
+        <input type="submit" class="btn btn-danger" value="BUSCAR" />
+    }
+
+    <p align="right"> <a href="@Url.Action("Form", "Escritor")" class="btn btn-success">Agregar Escritor</a></p>
+</div>
+
+
+
+@if (Model == null)
+{
+    <div class="alert alert-warning" role="alert">
+        Ocurrio Error!
+    </div>
+}
+
+else
+{
+    <table class="table table-striped" id="tabla">
+        <thead>
+            <tr class="text-center">
+
+                <th>EDITAR/ELIMINAR</th>
+                <th><i class="fa fa-camera" style="color: #000000;"></i> Foto</th>
+                <th><i class="fa-solid fa-user" style="color: #000000;"></i> Nombre</th>
+                <th><i class="fa-solid fa-mobile" style="color: #000000;"></i>Telefono</th>
+                <th><i class="fa-regular fa-envelope" style="color: #000000;"></i> Email</th>
+                <th>VER CUENTOS/AGREGAR CUENTOS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ML.Escritor escritor in Model.Escritors)
+            {
+                <tr class="text-center">
+                    <td>
+                        <a href="@Url.Action("Form","Cuento", new {IdEscritor = escritor.IdEscritor} )" class="btn btn-warning"><i class="fa-regular fa-pen-to-square" style="color: #ffffff;"></i></a>
+
+                        <a href="@Url.Action("Delete","Escritor", new {IdEscritor = escritor.IdEscritor} )" class="btn btn-danger">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </a>
+                    </td>
+                    @if (escritor.Foto == null)
+                    {
+                        <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png" height="50" width="50" /></td>
+                    }
+                    else
+                    {
+                        <td><img src="data:image/*;base64, @escritor.Foto " height="70" width="80" /></td>
+
+                    }
+                    <td>@escritor.Nombre @escritor.ApellidoPaterno</td>
+                    <td>@escritor.Telefono</td>
+                    <td>@escritor.CorreoElectronico</td>
+                    @*   <td>@usuario.Direccion.Calle</td>
+            <td>@usuario.Direccion.Colonia.IdColonia</td>
+            <td>@usuario.Direccion.Colonia.Municipio.IdMunicipio</td>
+            <td>@usuario.Direccion.Colonia.Municipio.Estado.IdEstado</td>
+            <td>@usuario.Direccion.Colonia.Municipio.Estado.Pais.IdPais</td> *@
+                    <td>
+                        <a href="@Url.Action("GetCuentosAsignadosPorEscritor","Escritor", new {IdEscritor = escritor.IdEscritor} )" class="btn btn-success">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a href="@Url.Action("Form","Cuento", new {IdEscritor = escritor.IdEscritor} )" class="btn btn-primary">
+                            <i class="fa fa-book"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.material.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>

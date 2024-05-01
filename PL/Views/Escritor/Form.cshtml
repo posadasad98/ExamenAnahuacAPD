@@ -1,0 +1,216 @@
+﻿@model ML.Escritor
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>FORMULARIO DE ESCRITOR</h2>
+<hr />
+
+@using (Html.BeginForm("Form", "Escritor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.IdEscritor)
+
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.Nombre)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-circle-user" style="color: #000000;"></i></span>
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @placeholder = "Ejemplo: Luis" })
+            </div>
+            <div style="color :red;">
+                @Html.ValidationMessageFor(model => model.Nombre)
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.ApellidoPaterno)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-circle-user" style="color: #000000;"></i></span>
+                @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control", @placeholder = "Espejel" })
+            </div>
+            <div style="color :red;">
+                @Html.ValidationMessageFor(model => model.ApellidoPaterno)
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.ApellidoMaterno)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-circle-user" style="color: #000000;"></i></span>
+                @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control", @placeholder = "Garcia" })
+            </div>
+            <div style="color :red;">
+                @Html.ValidationMessageFor(model => model.ApellidoMaterno)
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.Telefono)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-mobile" style="color: #000000;"></i></span>
+                @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control", @placeholder = "Ejemplo: 55 3903 3873" })
+            </div>
+            <div style="color :red;">
+                @Html.ValidationMessageFor(model => model.Telefono)
+            </div>
+
+            @Html.LabelFor(model => model.CorreoElectronico)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-at" style="color: #000000;"></i></span>
+                @Html.TextBoxFor(model => model.CorreoElectronico, new { @class = "form-control", @placeholder = "Ejemplo: aposadas@gmail.com" })
+            </div>
+            <div style="color :red;">
+                @Html.ValidationMessageFor(model => model.CorreoElectronico)
+            </div>
+            <div class="col-md-4">
+                @Html.Label("Imagen")
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-camera"></i></span>
+                    <input id="amd" type="file" name="amd" class="form-control" onchange="validateFile(), readURL(this)" />
+                </div>
+                  @if (Model.Foto == null)
+            {
+            <img id="img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png
+            " height="150" width="150" />
+
+            }
+            else
+            {
+            <img src="data:image/*;base64,(Model.Foto)" height="150" width="150" />
+
+            }
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <hr />
+
+
+    <div class="row">
+
+       
+            <p align="center"> <input type="submit" style='width:100px; height:50px' class="btn btn-success" value="Agregar" /></p>
+        
+
+        <p align="center"><a href="@Url.Action("GetAll", "Escritor")" class="btn btn-danger" style='width:100px; height:50px'>Cancelar</a></p>
+    </div>
+}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ddlPais").change(function () {
+            $("#ddlEstado").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("EstadoGetByIdPais", "Usuario")',
+                dataType: 'json',
+                data: { idPais: $("#ddlPais").val() },
+                success: function (estados) {
+                    $("#ddlEstado").append('<option value="0">' + 'Seleccione un estado' + '</option>');
+                    $.each(estados, function (i, estados) {
+                        $("#ddlEstado").append('<option value="'
+                            + estados.IdEstado + '">'
+                            + estados.Nombre + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Ocurrio un error al recibir la información.' + ex);
+                }
+            });
+        });
+
+        $("#ddlEstado").change(function () {
+            $("#ddlMunicipio").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("MunicipioGetByIdEstado", "Usuario")',
+                dataType: 'json',
+                data: { idEstado: $("#ddlEstado").val() },
+                success: function (Municipios) {
+                    $("#ddlMunicipio").append('<option value="0">' + 'Seleccione un Municipio' + '</option>');
+                    $.each(Municipios, function (i, Municipios) {
+                        $("#ddlMunicipio").append('<option value="'
+                            + Municipios.IdMunicipio + '">'
+                            + Municipios.Nombre + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Ocurrio un error al recibir la información.' + ex);
+                }
+            });
+        });
+
+        $("#ddlMunicipio").change(function () {
+            $("#ddlColonia").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ColoniaGetByIdMunicipio", "Usuario")',
+                dataType: 'json',
+                data: { idMunicipio: $("#ddlMunicipio").val() },
+                success: function (Colonias) {
+                    $("#ddlColonia").append('<option value="0">' + 'Seleccione una Colonia' + '</option>');
+                    $.each(Colonias, function (i, Colonias) {
+                        $("#ddlColonia").append('<option value="'
+                            + Colonias.IdColonia + '">'
+                            + Colonias.Nombre + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Ocurrio un error al recibir la información.' + ex);
+                }
+            });
+        });
+
+
+    });
+    $(function () {
+        $("#datepicker").datepicker({
+            dateFormat: 'dd-mm-yy',
+            changeMonth: true,
+            changeYear: true,
+            showAnim: "clip"
+        });
+    });
+
+    function validateFile() {
+        var allowedExtension = ['jpeg', 'jpg', 'png'];
+        var fileInput = document.getElementById('amd');
+        var fileExtension = fileInput.value.split('.').pop().toLowerCase();
+        var isValidFile = allowedExtension.includes(fileExtension);
+
+        if (!isValidFile) {
+            alert('Las extensiones permitidas son: ' + allowedExtension.join(', '));
+            fileInput.value = "";
+        }
+
+        return isValidFile;
+    }
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#img').attr('src', e.target.result);
+
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+</script>
+ 

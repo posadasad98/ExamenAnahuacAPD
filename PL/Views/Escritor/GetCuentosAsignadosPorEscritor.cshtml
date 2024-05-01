@@ -1,0 +1,112 @@
+﻿@model  ML.Cuento
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.HiddenFor(model => model.Escritor.IdEscritor)
+@if (Model == null)
+{
+    <div class="alert alert-warning" role="alert">
+        Ocurrio Error!
+    </div>
+}
+
+else
+{
+    <table class="table table-striped" id="tabla">
+        <thead>
+            <tr class="text-center">
+                <th>Editar</th>
+
+                <th><i class="fa-solid fa-user" style="color: #000000;"></i> IdCuento</th>
+                <th><i class="fa-solid fa-credit-card" style="color: #000000;"></i> Nombre Cuento </th>
+                <th><i class="fa-solid fa-credit-card" style="color: #000000;"></i> Portada </th>
+                <th><i class="fa-solid fa-credit-card" style="color: #000000;"></i> Fecha Registro </th>
+
+                <th>Eliminar</th>
+                <th>Ver Cuento</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ML.Cuento cuentoEscritor in Model.Cuentos)
+            {
+                <tr class="text-center">
+                    <td>
+                        <a href="@Url.Action("Form","Cuento", new {IdCuento = cuentoEscritor.IdCuento} )" class="btn btn-warning"><i class="fa-regular fa-pen-to-square" style="color: #ffffff;"></i></a>
+                    </td>
+                    <td>@cuentoEscritor.IdCuento</td>
+                    <td>@cuentoEscritor.NombreCuento</td>
+                    <td><img src="data:image/*;base64, @cuentoEscritor.Portada " height="70" width="80" /></td>
+                    <td>@cuentoEscritor.FechaRegistro.ToString("dd-MM-yyyy")</td>
+
+
+                    <td> <a href="@Url.Action("Delete", "Cuento",new {IdCuento = cuentoEscritor.IdCuento, IdEscritor = Model.Escritor.IdEscritor})" class="btn btn-danger"><i class="bi bi-trash3-fill"></i></a> </td>
+                    <td>
+                        <button type="button" class="btn btn-primary ver-cuento-btn" data-id="@cuentoEscritor.TextoCuento"><i class="bi bi-eye-fill"></i> Ver Cuento</button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div>
+        <p align="center"> <a href="@Url.Action("GetAll", "Escritor")" class="btn btn-danger">Regresar a lista de escritores</a></p>
+    </div>
+}
+<div class="modal fade" id="verCuentoModal" tabindex="-1" aria-labelledby="verCuentoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verCuentoModalLabel">Texto del Cuento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="textoCuento"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.material.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#tabla').DataTable({
+            searching: false,
+            "lengthMenu": [[5, 10, 15, 20, -1], [5, 10, 15, 20, "All"]],
+            autoWidth: false,
+            columnDefs: [
+                {
+                    targets: ['_all'],
+                    className: 'mdc-data-table__cell',
+                },
+            ],
+            language: {
+                url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
+            },
+
+        });
+    });
+
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Cuando se hace clic en el botón "Ver Cuento"
+        $('.ver-cuento-btn').click(function () {
+            var textoCuento = $(this).data('id');
+            // Mostrar el texto del cuento en el modal
+            $('#textoCuento').text(textoCuento);
+            // Mostrar el modal
+            $('#verCuentoModal').modal('show');
+        });
+    });
+</script>
+

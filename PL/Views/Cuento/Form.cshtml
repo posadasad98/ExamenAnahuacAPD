@@ -1,0 +1,120 @@
+﻿@model ML.Cuento
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>FORMULARIO DE CUENTO</h2>
+<hr />
+@using (Html.BeginForm("Form", "Cuento", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.Escritor.IdEscritor)
+    @Html.HiddenFor(model => model.IdCuento)
+
+    <div class="row">
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.NombreCuento)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-book"></i></span>
+            @Html.TextBoxFor(model => model.NombreCuento, new { @class = "form-control", PlaceHolder = "Ejemplo: Blanca Nieves" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.FechaRegistro)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-regular fa-calendar-days"></i></span>
+                @Html.TextBoxFor(model => model.FechaRegistro, new { @class = "form-control datepicker", @id = "datepicker", @autocomplete = "off" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.TextoCuento)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-align-justify"></i></span>
+            @Html.TextAreaFor(model => model.TextoCuento, new { @class = "form-control", PlaceHolder = "Texto del Cuento" })
+            </div>
+        </div>
+    </div>
+    <div class="row">
+@*         <div class="col-md-4">
+            @Html.LabelFor(model => model.Portada)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-file-text"></i></span>
+                <input type="file" id="amd" name="Portada" onchange="validateFile()" >
+            </div>
+            <img id="portadaPreview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png" alt="Vista previa de la imagen" style="max-width: 80px; max-height: 80px; margin-left: 5px;">
+        </div> *@
+ @*        <div class="col-md-4">
+            @Html.LabelFor(model => model.Referencias)
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-file-text"></i></span>
+                <input type="file" name="Referencias" class="form-control" accept=".pdf">
+            </div>
+        </div> *@
+        <div class="col-md-4">
+            @Html.LabelFor(model => model.Genero.IdGenero)
+ @Html.DropDownListFor(model => model.Genero.IdGenero, new SelectList(Model.Genero.Generos, "IdGenero", "NombreGenero"), "Selecciona un genero", new { @class = "form-control", @id = "ddlGenero" })
+            
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12 d-flex justify-content-center">
+            <input type="submit" value="Guardar" class="btn btn-primary" />
+        </div>
+        <p align="center"><a href="@Url.Action("GetAll", "Escritor")" class="btn btn-danger" style='width:100px; height:50px'>Cancelar</a></p>
+    </div>
+
+}
+
+@section Scripts {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({
+                dateFormat: 'dd-mm-yy',
+                changeMonth: true,
+                changeYear: true,
+                showAnim: "slideDown"
+            });
+        });
+
+        function validateFile() {
+            var allowedExtension = ['jpeg', 'jpg', 'png'];
+            var fileInput = document.getElementById('amd');
+            var fileExtension = fileInput.value.split('.').pop().toLowerCase();
+            var isValidFile = false;
+
+            for (var index in allowedExtension) {
+                if (fileExtension === allowedExtension[index]) {
+                    isValidFile = true;
+                    break;
+                }
+            }
+
+            if (!isValidFile) {
+                alert('Las extensiones permitidas son: ' + allowedExtension.join(', '));
+                fileInput.value = "";
+                return false;
+            }
+
+            // Mostrar vista previa de la imagen
+            if (fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('portadaPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+
+            return true;
+        }
+
+
+        $("input[name='Referencias']").change(function () {
+            var fileName = $(this).val().split('\\').pop();
+            $(this).next('.input-group-text').text(fileName);
+        });
+    </script>
+}
